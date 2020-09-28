@@ -41,9 +41,8 @@ s.connect(addrPort)
 print("Connected...")
 
 filename = input(str("Enter a file name to be transferred: "))
-f = open(filename, "rb")
-file_data = s.recv(1024)
-f.write(file_data)
-f.close()
+with open(filename, "r") as sending:
+    file_data = sending.read(1024)
+    data = s.send(str(file_data).encode('utf-8'))
 print("The file has been transferred successfully!")
 s.close()

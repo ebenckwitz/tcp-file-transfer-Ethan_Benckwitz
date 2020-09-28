@@ -29,11 +29,14 @@ conn, addr = s.accept()  # wait until incoming connection request (and accept it
 print('Connected by', addr)
 
 #from framedSock import framedSend, framedReceive
-filename = input(str("Please enter the name of the file: "))
-f = open(filename, "wb")
-file_data = f.read(1024)
-conn.send(file_data)
+filename = input(str("Please enter the name of the file that will save data: "))
+with open(filename, "w") as writing:
+    file_data = conn.recv(1024)
+    udata = file_data.decode('utf-8')
+    for l in udata:
+        writing.write(l)
 print("Data has been sent successfully!")
+writing.close()
                  
 ''''
 while True:
