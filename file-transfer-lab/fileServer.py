@@ -24,10 +24,18 @@ s.bind(bindAddr)
 s.listen(1)              # allow only one outstanding request
 # s is a factory for connected sockets
 
+print("Waiting to be connected...")
 conn, addr = s.accept()  # wait until incoming connection request (and accept it)
 print('Connected by', addr)
 
-from framedSock import framedSend, framedReceive
+#from framedSock import framedSend, framedReceive
+filename = input(str("Please enter the name of the file: "))
+f = open(filename, "wb")
+file_data = f.read(1024)
+conn.send(file_data)
+print("Data has been sent successfully!")
+                 
+''''
 while True:
     payload = framedReceive(sock, debug)
     if debug: print("rec'd: ", payload)
@@ -35,4 +43,5 @@ while True:
         break
     payload += b"!"             # make emphatic!
     framedSend(sock, payload, debug)
+'''
 conn.close()

@@ -5,7 +5,7 @@ import socket, sys, re
 sys.path.append("../lib")       # for params
 import params
 
-from framedSock import framedSend, framedReceive
+#from framedSock import framedSend, framedReceive
 
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
@@ -36,14 +36,14 @@ s = socket.socket(addrFamily, socktype)
 if s is None:
     print('could not open socket')
     sys.exit(1)
-
+print("Waiting to be connected...")
 s.connect(addrPort)
+print("Connected...")
 
-print("sending hello world")
-framedSend(s, b"hello world", debug)
-print("received:", framedReceive(s, debug))
-
-print("sending hello world")
-framedSend(s, b"hello world", debug)
-print("received:", framedReceive(s, debug))
+filename = input(str("Enter a file name to be transferred: "))
+f = open(filename, "rb")
+file_data = s.recv(1024)
+f.write(file_data)
+f.close()
+print("The file has been transferred successfully!")
 s.close()
