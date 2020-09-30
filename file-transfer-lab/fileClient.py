@@ -36,13 +36,21 @@ s = socket.socket(addrFamily, socktype)
 if s is None:
     print('could not open socket')
     sys.exit(1)
+    
 print("Waiting to be connected...")
 s.connect(addrPort)
 print("Connected...")
 
-filename = input(str("Enter a file name to be transferred: "))
-with open(filename, "r") as sending:
-    file_data = sending.read(1024)
-    data = s.send(str(file_data).encode('utf-8'))
-print("The file has been transferred successfully!")
+while True:
+    try:
+        filename = input(str("Enter a file name to be transferred or enter exit: "))
+        if filename == "exit": break
+        sending = open(filename, "r")
+        file_data = sending.read(1024)
+        if len(file_data.encode('utf-8')) == 0: print("File was empty! Try a different file")
+        data = s.send(str(file_data).encode('utf-8'))
+        print("The file has been transferred successfully!")
+    except FileNotFoundError:
+        print("File Not Found!")
+
 s.close()
