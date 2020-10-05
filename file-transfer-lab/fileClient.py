@@ -5,7 +5,7 @@ import socket, sys, re
 sys.path.append("../lib")       # for params
 import params
 
-#from framedSock import framedSend, framedReceive
+from framedSock import framedSend, framedReceive
 
 switchesVarDefaults = (
     (('-s', '--server'), 'server', "127.0.0.1:50001"),
@@ -46,9 +46,9 @@ while True:
         filename = input(str("Enter a file name to be transferred or enter exit: "))
         if filename == "exit": break
         sending = open(filename, "r")
-        file_data = sending.read(1024)
-        if len(file_data.encode('utf-8')) == 0: print("File was empty! Try a different file")
-        data = s.send(str(file_data).encode('utf-8'))
+        file_data = sending.read()
+        if len(file_data) == 0: print("File was empty! Try a different file")
+        framedSend(s, (file_data).encode(), debug)
         print("The file has been transferred successfully!")
     except FileNotFoundError:
         print("File Not Found!")
