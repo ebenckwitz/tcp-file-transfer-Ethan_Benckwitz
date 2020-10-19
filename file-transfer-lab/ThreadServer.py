@@ -27,8 +27,24 @@ s.listen(5)              # s is a factory for connected sockets
 print("waiting to be connected...")
 os.chdir("./SentFilesThread")
 
-from threading import Thread;
+from threading import Thread, Lock
 from encapFramedSock import EncapFramedSock
+global flock
+used_files = []
+flock = Lock()
+
+def lock_file_start(filename):
+    global flock
+    flock.acquire()
+    if filename in used_files:
+        print("File currently being used, try again!")
+        flock.release()
+        sys.exit(1)
+    else:
+        used_files.append(filename)
+        flock.release()
+def lock_file_end(filename):
+    used_files.remove(filename)
 
 class Server(Thread):
     def __init__(self, sockAddr):
@@ -55,17 +71,15 @@ class Server(Thread):
                 print("This file already exists on the server.")
                 sys.exit(1)
             else:
+                lock_file_start(filename)
                 writing = open(filename, 'w+b')
                 writing.write(data)
                 print("Data has been sent successfully!")
                 writing.close()
+                lock_file_end(filename)
                 sys.exit(0)
 
 while True:
     sockAddr = s.accept()  # wait until incoming connection request (and accept it)
     server = Server(sockAddr)
     server.start()
-
-
-
-
